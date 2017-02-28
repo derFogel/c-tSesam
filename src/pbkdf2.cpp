@@ -59,21 +59,21 @@ void PBKDF2::setPassword(QString arg) {
 }
 
 void PBKDF2::calculate() {
-    unsigned char hash[128];
+    unsigned char hash[64];
 
     QString toHash = mString + mPassword;
 
-    PKCS5_PBKDF2_HMAC(toHash.toStdString().c_str(), toHash.length(), (unsigned char*)mSalt.toStdString().c_str(), mSalt.length(), 4096, EVP_sha512(), 128, hash);
+    PKCS5_PBKDF2_HMAC(toHash.toStdString().c_str(), toHash.length(), (unsigned char*)mSalt.toStdString().c_str(), mSalt.length(), 4096, EVP_sha512(), 64, hash);
 
     __uint128_t num = 0;
 
-    for (int i = 0; i < 128; i++) {
+    for (int i = 0; i < 64; i++) {
         num = (num << 8) | hash[i];
     }
 
     mHash.clear();
 
-    while (num > 0 &&mHash.length() < mPasswordLength) {
+    while (num > 0 && mHash.length() < mPasswordLength) {
         mHash.append(mUsedChars.at(num % mUsedChars.length()));
         num = num / mUsedChars.length();
     }
