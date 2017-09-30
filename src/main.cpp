@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "pbkdf2.hpp"
+#include "sha256.hpp"
 #include "clipboard.hpp"
 
 int main(int argc, char *argv[])
@@ -11,6 +12,7 @@ int main(int argc, char *argv[])
     app.setApplicationName("c't Sesam");
 
     qmlRegisterType<PBKDF2>("Password", 1, 0, "PBKDF2");
+    qmlRegisterType<SHA256>("Password", 1, 0, "SHA256");
     qmlRegisterType<Clipboard>("Clipboard", 1, 0, "Clipboard");
 
     QQmlApplicationEngine engine;

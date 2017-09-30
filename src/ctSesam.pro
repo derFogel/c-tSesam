@@ -5,7 +5,8 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
     pbkdf2.cpp \
-    clipboard.cpp
+    clipboard.cpp \
+    sha256.cpp
 
 RESOURCES += qml.qrc
 
@@ -19,7 +20,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     pbkdf2.hpp \
-    clipboard.hpp
+    clipboard.hpp \
+    sha256.hpp
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += openssl

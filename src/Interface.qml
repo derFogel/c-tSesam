@@ -10,14 +10,11 @@ Rectangle {
     width: 230
     height: 220
 
-    Item {
-        focus: true
-        Keys.onPressed: {
-            if (event.key == Qt.Key_Escape) {
-                hide();
-                clear.start()
-                event.accepted = true;
-            }
+    Keys.onPressed: {
+        if (event.key == Qt.Key_Escape) {
+            hide();
+            clear.start();
+            event.accepted = true;
         }
     }
 
@@ -27,6 +24,7 @@ Rectangle {
         property string salt: "pepper"
         property int passwortLength: 10
         property int expire: 10
+        property var chars : {}
     }
 
     PBKDF2 {
@@ -35,6 +33,10 @@ Rectangle {
         salt: settings.salt
         usedChars: chars1.text
         passwordLength: settings.passwortLength
+    }
+
+    SHA256 {
+        id: sha256
     }
 
     Clipboard {
@@ -86,13 +88,11 @@ Rectangle {
             hasher.calculate();
             output.text = hasher.hash;
             clip.text = hasher.hash;
-        }
 
-        Keys.onPressed: {
-            if (event.key == Qt.Key_Escape) {
-                hide();
-                clear.start();
-                event.accepted = true;
+            sha256.hash = text;
+
+            if (typeof settings.chars[sha256.hashedValue] != 'undefined') {
+                chars1.text = settings.chars[sha256.hashedValue];
             }
         }
     }
@@ -148,14 +148,6 @@ Rectangle {
                 output.echoMode = TextInput.Password;
             }
         }
-
-        Keys.onPressed: {
-            if (event.key == Qt.Key_Escape) {
-                hide();
-                clear.start()
-                event.accepted = true;
-            }
-        }
     }
 
     TextArea {
@@ -168,6 +160,14 @@ Rectangle {
         wrapMode: TextEdit.WrapAnywhere
 
         onTextChanged: {
+            if (text != "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#!\"§$%&/()[]{}=-_+*<>;:.") {
+                if (typeof settings.chars == 'undefined') {
+                    settings.chars = {};
+                }
+
+                settings.chars[sha256.hashedValue] = text;
+            }
+
             settings.pwchars = text;
             hasher.usedChars = text;
             hasher.calculate()
@@ -175,11 +175,7 @@ Rectangle {
         }
 
         Keys.onPressed: {
-            if (event.key == Qt.Key_Escape) {
-                hide();
-                clear.start()
-                event.accepted = true;
-            } else if (event.key == Qt.Key_F1) {
+            if (event.key == Qt.Key_F1) {
                 text = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#!\"§$%&/()[]{}=-_+*<>;:.";
                 event.accepted = true;
             }
